@@ -26,6 +26,23 @@ fetch('http://localhost:5678/api/works')
                 for (let category of categories) {
                     createFilters(category);
                 }
+
+                const filters = document.querySelectorAll('.filter');
+                //console.log(filters);
+                filters.forEach((filter, category) => { // loop to display the right projects on click based on filter and category
+                    filter.addEventListener('click', function () {
+                        document.querySelector('.gallery').innerHTML = '';
+                        for (let project of projects) {
+                            if (category === project.categoryId) {
+                                //console.log(category);
+                                showProjects(project);
+                            } else if (category === 0) {
+                                //console.log(category);
+                                showProjects(project);
+                            }
+                        };
+                    });
+                });
             })
 
             .catch((error) => {
@@ -55,7 +72,6 @@ function showProjects(project) {
 };
 
 // function to create filters
-
 function createFilters(category) {
     const filters = document.querySelector('ul.filters');
     const newLi = document.createElement('li');
