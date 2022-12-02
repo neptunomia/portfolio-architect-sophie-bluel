@@ -1,4 +1,4 @@
-// query to retrieve all works
+// queries
 fetch('http://localhost:5678/api/works')
     .then((response) => {
         if (!response.ok) {
@@ -6,9 +6,31 @@ fetch('http://localhost:5678/api/works')
         }
         return response.json();
     })
-    .then((data) => {
-        console.log(data);
-        showProjects(data);
+    .then((projects) => {
+        //console.log(projects);
+
+        for (let project of projects) {
+            showProjects(project); // show all projects
+        }
+
+        fetch('http://localhost:5678/api/categories')
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not OK');
+                }
+                return response.json();
+            })
+            .then((categories) => {
+                //console.log(categories);
+
+                for (let category of categories) {
+                    createFilters(category);
+                }
+            })
+
+            .catch((error) => {
+                console.error('There has been a problem with your fetch operation:', error);
+            })
     })
 
     .catch((error) => {
@@ -16,52 +38,28 @@ fetch('http://localhost:5678/api/works')
     })
 
 // function to create and show projects
-function showProjects(projects) {
-    //console.log(projects)
-    for (let project of projects) {
+function showProjects(project) {
+    const gallery = document.querySelector('div.gallery');
+    const newFigure = document.createElement('figure');
 
-        const gallery = document.querySelector('div.gallery');
-        const newFigure = document.createElement('figure');
-        newFigure.setAttribute('category-id', project.categoryId)
+    const newImage = document.createElement('img');
+    newImage.setAttribute('crossorigin', 'anonymous')
+    newImage.setAttribute('src', project.imageUrl);
 
-        const newImage = document.createElement('img');
-        newImage.setAttribute('crossorigin', 'anonymous')
-        newImage.setAttribute('src', project.imageUrl);
+    const newFigcaption = document.createElement('figcaption');
+    newFigcaption.innerText = project.title;
 
-        const newFigcaption = document.createElement('figcaption');
-        newFigcaption.innerText = project.title;
-
-        newFigure.appendChild(newImage);
-        newFigure.appendChild(newFigcaption);
-        gallery.appendChild(newFigure);
-    }
-}
-
-fetch('http://localhost:5678/api/categories')
-    .then((response) => {
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        return response.json();
-    })
-    .then((categories) => {
-        console.log(categories);
-        createFilters(categories);
-    })
-
-    .catch((error) => {
-        console.error('There has been a problem with your fetch operation:', error);
-    })
+    newFigure.appendChild(newImage);
+    newFigure.appendChild(newFigcaption);
+    gallery.appendChild(newFigure);
+};
 
 // function to create filters
 
-function createFilters(filtersContent) {
+function createFilters(category) {
     const filters = document.querySelector('ul.filters');
-
-    for (let filter of filtersContent) {
-        const newLi = document.createElement('li');
-        newLi.innerText = filter.name;
-        newLi.classList.add('filter');
-        filters.appendChild(newLi);
-    }
+    const newLi = document.createElement('li');
+    newLi.innerText = category.name;
+    newLi.classList.add('filter');
+    filters.appendChild(newLi);
 };
