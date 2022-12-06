@@ -29,9 +29,12 @@ fetch('http://localhost:5678/api/works')
 
                 const filters = document.querySelectorAll('.filter');
                 //console.log(filters);
+
                 filters.forEach((filter, category) => { // loop to display the right projects on click based on filter and category
                     filter.addEventListener('click', function () {
                         document.querySelector('.gallery').innerHTML = '';
+                        filter.classList.add('selected-filter');
+
                         for (let project of projects) {
                             if (category === project.categoryId) {
                                 //console.log(category);
@@ -41,6 +44,9 @@ fetch('http://localhost:5678/api/works')
                                 showProjects(project);
                             }
                         };
+
+                        const selectedFilter = document.querySelector('.selected-filter');
+                        selectedFilter.classList.remove('selected-filter');
                     });
                 });
             })

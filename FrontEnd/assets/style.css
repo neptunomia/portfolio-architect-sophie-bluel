@@ -99,7 +99,6 @@ nav ul {
 	display: flex;
 	align-items: center;
 	list-style-type: none;
-
 }
 
 nav li {
@@ -107,7 +106,7 @@ nav li {
 	font-size: 1.2em;
 }
 
-li:hover, a:hover {
+li:hover, a:hover, .password-forgot a:hover {
 	cursor: pointer;
 	color: #B1663C;
 }
@@ -167,6 +166,11 @@ nav a {
 
 .filter:hover {
 	cursor: pointer;
+	background-color: #1D6154;
+	color: #fff;
+}
+
+.selected-filter {
 	background-color: #1D6154;
 	color: #fff;
 }
@@ -243,10 +247,24 @@ input[type="submit"] {
 	border-radius: 60px ;
 }
 
+#submit-button {
+	cursor: pointer;
+}
+
 .password-forgot {
-	color: #3D3D3D;
-	text-decoration: underline;
 	margin-bottom: 120px;
+}
+
+.password-forgot a {
+	color: #3D3D3D;
+}
+
+.error-message {
+	color: red;
+	font-family: 'Work Sans' ;
+	font-size: 16px;
+	margin-top: 30px;
+	margin-bottom: -20px;
 }
 
 footer nav ul {
