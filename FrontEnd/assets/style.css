@@ -57,19 +57,38 @@ table {
 
 body {
 	max-width: 1140px;
-	margin:auto;
-	font-family: 'Work Sans' ;
+	margin: auto;
+	font-family: 'Work Sans';
 	font-size: 14px;
 }
 
-header {
+.header {
 	display: flex;
 	justify-content: space-between;
-	margin: 50px 0
+	margin: 50px 0;
+}
+
+.edit-header {
+	background-color: #000;
+	color: #fff;
+	font-size: 16px;
+	text-align: center;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.publish-button {
+	margin-left: 20px;
+	padding : 10px 20px 10px 20px;
+	border-radius: 60px;
+}
+
+.edit-mode-margin, .edit-span-margin {
+	margin-left: 5px;
 }
 
 section {
-	margin: 50px 0
+	margin: 60px;
 }
 
 h1 {
@@ -78,12 +97,12 @@ h1 {
 	font-family: 'Syne';
 	font-size: 22px;
 	font-weight: 800;
-	color: #B1663C
+	color: #B1663C;
 }
 
 h1 > span {
 	font-family: 'Work Sans';
-	font-size:10px;
+	font-size: 10px;
 	letter-spacing: 0.1em;
 ;
 }
@@ -92,7 +111,7 @@ h2 {
 	font-family: 'Syne';
 	font-weight: 700;
 	font-size: 30px;
-	color: #1D6154
+	color: #1D6154;
 }
 
 nav ul {
@@ -111,7 +130,7 @@ li:hover, a:hover, .password-forgot a:hover {
 	color: #B1663C;
 }
 
-nav a {
+a {
 	text-decoration: none;
 	color: #000;
 }
@@ -122,20 +141,21 @@ nav a {
 }
 
 #introduction figure {
-	flex: 1
+	flex: 1;
 }
 
 #introduction img {
 	display: block;
-	margin: auto;
-	width: 80%;
+	margin: 0 10px 15px 0;
+	width: 90%;
 }
 
 #introduction article {
-	flex: 1
+	flex: 1;
 }
 
 #introduction h2 {
+	margin-top: 0.5em;
 	margin-bottom: 1em;
 }
 
@@ -145,7 +165,14 @@ nav a {
 
 #portfolio h2 {
 	text-align: center;
+	margin-right: 1em;
 	margin-bottom: 1em;
+}
+
+.portfolio-title {
+	display: flex;
+	justify-content: center;
+	align-items: baseline;
 }
 
 .filters {
@@ -241,10 +268,10 @@ input[type="submit"] {
 	font-weight: 700;
 	color: white;
 	background-color: #1D6154;
-	margin : 2em auto ;
+	margin : 2em auto;
 	width: 180px;
 	text-align: center;
-	border-radius: 60px ;
+	border-radius: 60px;
 }
 
 #submit-button {
@@ -261,7 +288,7 @@ input[type="submit"] {
 
 .error-message {
 	color: red;
-	font-family: 'Work Sans' ;
+	font-family: 'Work Sans';
 	font-size: 16px;
 	margin-top: 30px;
 	margin-bottom: -20px;
@@ -270,5 +297,5 @@ input[type="submit"] {
 footer nav ul {
 	display: flex;
 	justify-content: flex-end;
-	margin: 2em
+	margin: 2em;
 }

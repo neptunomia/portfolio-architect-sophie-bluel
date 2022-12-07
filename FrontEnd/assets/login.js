@@ -53,5 +53,5 @@ function incorrectCredentials() {
 }
 
 function storeCredentials(user) {
-    sessionStorage.setItem('token', user.token);
+    localStorage.setItem('token', user.token);
 }

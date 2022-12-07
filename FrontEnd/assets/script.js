@@ -1,4 +1,4 @@
-// queries
+//// queries to show and filter projects
 fetch('http://localhost:5678/api/works')
     .then((response) => {
         if (!response.ok) {
@@ -85,3 +85,36 @@ function createFilters(category) {
     newLi.classList.add('filter');
     filters.appendChild(newLi);
 };
+
+//// change the homepage when the user is logged in
+function editHomepage() {
+    const editDivContent = `<div class="edit-margin">
+    <a href="#"><i class="fa-regular fa-pen-to-square"></i>
+    <span class="edit-span-margin">modifier</span></a></div>`;
+    const editModeDivContent = `<div class="edit-header">
+    <i class="fa-regular fa-pen-to-square"></i>
+    <span class="edit-mode-margin">Mode édition</span></div>`;
+
+    const header = document.querySelector('header');
+    const headerNav = document.querySelector('.header');
+    const newDiv = document.createElement('div');
+    newDiv.innerHTML = editModeDivContent;
+    header.insertBefore(newDiv, headerNav);
+
+    const newButton = document.createElement('button');
+    document.querySelector('.edit-header').appendChild(newButton);
+    newButton.innerText = 'publier les changements';
+    newButton.classList.add('publish-button');
+
+    const article = document.querySelector('article');
+    const figure = document.querySelector('.introduction figure');
+    const portfolioSectionTitle = document.querySelector('.portfolio-title');
+
+    article.insertAdjacentHTML("afterbegin", editDivContent);
+    figure.insertAdjacentHTML("beforeend", editDivContent);
+    portfolioSectionTitle.insertAdjacentHTML("beforeend", editDivContent);
+}
+
+if (localStorage.getItem('token')) {
+    editHomepage();
+}
