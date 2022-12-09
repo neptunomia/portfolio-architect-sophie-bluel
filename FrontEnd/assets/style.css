@@ -386,6 +386,7 @@ h3 {
 }
 
 .icon-div-trash {
+	cursor: pointer;
 	position: relative;
 	top: 28px;
 	left: 69px;

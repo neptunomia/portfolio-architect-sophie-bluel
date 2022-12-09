@@ -20,7 +20,6 @@ fetch('http://localhost:5678/api/works')
             const galleryEditButton = document.querySelector('.portfolio-title a');
             galleryEditButton.setAttribute('href', '#photo-gallery-modal');
             //console.log(galleryEditButton);
-
             galleryEditButton.addEventListener('click', openModal);
 
             for (let project of projects) {
@@ -29,6 +28,33 @@ fetch('http://localhost:5678/api/works')
 
             const firstArrowsIcon = document.querySelector('.icon-div-arrows:first-child');
             firstArrowsIcon.classList.replace('icon-div-style-not-shown', 'icon-div-style-shown');
+
+            const modalDeletedElement = Array.from((document.querySelectorAll('.gallery figure')));
+            console.log(modalDeletedElement);
+            const galleryDeletedElement = Array.from((document.querySelectorAll('.pictures figure')))
+            console.log(galleryDeletedElement);
+
+            const trashIcons = document.querySelectorAll('.icon-div-trash');
+            //console.log(trashIcons);
+            trashIcons.forEach((trashIcon) => {
+                trashIcon.addEventListener('click', function () {
+                    let id = trashIcon.getAttribute('id');
+                    //console.log(id);
+
+                    deleteRequest(id);
+
+                    for (let element of modalDeletedElement) {
+                        if (id === (element.getAttribute('id'))) {
+                            element.remove();
+                        }
+                    }
+                    for (let element of galleryDeletedElement) {
+                        if (id === (element.getAttribute('id'))) {
+                            element.remove();
+                        }
+                    }
+                })
+            });
         }
         ////
 
@@ -83,6 +109,8 @@ fetch('http://localhost:5678/api/works')
 function showProjects(project) {
     const gallery = document.querySelector('div.gallery');
     const newFigure = document.createElement('figure');
+
+    newFigure.setAttribute('id', project.id);
 
     const newImage = document.createElement('img');
     newImage.setAttribute('crossorigin', 'anonymous')
@@ -140,6 +168,8 @@ function showImages(project) {
     const figureModal = document.createElement('figure');
     const figcaptionModal = document.createElement('figcaption');
 
+    figureModal.setAttribute('id', project.id);
+
     const imageModal = document.createElement('img');
     imageModal.setAttribute('crossorigin', 'anonymous')
     imageModal.setAttribute('src', project.imageUrl);
@@ -148,7 +178,7 @@ function showImages(project) {
 
     const figureContent = `<div class="icon-div-style icon-div-arrows icon-div-style-not-shown">
     <i class="fa-solid fa-arrows-up-down-left-right icon-style"></i></div>
-    <div class="icon-div-style icon-div-trash icon-div-style-shown">
+    <div id="${project.id}" class="icon-div-style icon-div-trash icon-div-style-shown">
     <i class="fa-regular fa-trash-can icon-style"></i></div>`;
 
     figureModal.appendChild(imageModal);
@@ -156,10 +186,6 @@ function showImages(project) {
     figureModal.insertAdjacentHTML('afterbegin', figureContent);
     pictures.appendChild(figureModal);
 }
-
-/*const figureContentWithArrows = `<div class="icon-div-style icon-div-arrows">
-<i class="fa-solid fa-arrows-up-down-left-right icon-style"></i></div>`;
-document.querySelector('.pictures figure:first-child').insertAdjacentHTML('afterbegin', figureContentWithArrows);*/
 
 ///////////////
 
@@ -193,3 +219,21 @@ window.addEventListener('keydown', function (e) {
         closeModal(e);
     }
 })
+
+function deleteRequest(id) {
+    let token = localStorage.getItem('token');
+    fetch('http://localhost:5678/api/works/' + id, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not OK');
+            };
+        })
+        .catch((error) => {
+            console.error('There has been a problem with your fetch operation:', error);
+        })
+}
