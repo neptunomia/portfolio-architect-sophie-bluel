@@ -1,4 +1,4 @@
-//// queries to show and filter projects
+// queries to show and filter projects
 fetch('http://localhost:5678/api/works')
     .then((response) => {
         if (!response.ok) {
@@ -12,6 +12,25 @@ fetch('http://localhost:5678/api/works')
         for (let project of projects) {
             showProjects(project); // show all projects
         }
+
+        ////
+        if (localStorage.getItem('token')) {
+            editHomepage();
+
+            const galleryEditButton = document.querySelector('.portfolio-title a');
+            galleryEditButton.setAttribute('href', '#photo-gallery-modal');
+            //console.log(galleryEditButton);
+
+            galleryEditButton.addEventListener('click', openModal);
+
+            for (let project of projects) {
+                showImages(project);
+            }
+
+            const firstArrowsIcon = document.querySelector('.icon-div-arrows:first-child');
+            firstArrowsIcon.classList.replace('icon-div-style-not-shown', 'icon-div-style-shown');
+        }
+        ////
 
         fetch('http://localhost:5678/api/categories')
             .then((response) => {
@@ -60,7 +79,7 @@ fetch('http://localhost:5678/api/works')
         console.error('There has been a problem with your fetch operation:', error);
     })
 
-// function to create and show projects
+////
 function showProjects(project) {
     const gallery = document.querySelector('div.gallery');
     const newFigure = document.createElement('figure');
@@ -77,7 +96,7 @@ function showProjects(project) {
     gallery.appendChild(newFigure);
 };
 
-// function to create filters
+////
 function createFilters(category) {
     const filters = document.querySelector('ul.filters');
     const newLi = document.createElement('li');
@@ -86,7 +105,7 @@ function createFilters(category) {
     filters.appendChild(newLi);
 };
 
-//// change the homepage when the user is logged in
+// change the homepage when the user is logged in
 function editHomepage() {
     const editDivContent = `<div class="edit-margin">
     <a href="#"><i class="fa-regular fa-pen-to-square"></i>
@@ -115,6 +134,62 @@ function editHomepage() {
     portfolioSectionTitle.insertAdjacentHTML("beforeend", editDivContent);
 }
 
-if (localStorage.getItem('token')) {
-    editHomepage();
+// function to show images in modal window
+function showImages(project) {
+    const pictures = document.querySelector('.pictures');
+    const figureModal = document.createElement('figure');
+    const figcaptionModal = document.createElement('figcaption');
+
+    const imageModal = document.createElement('img');
+    imageModal.setAttribute('crossorigin', 'anonymous')
+    imageModal.setAttribute('src', project.imageUrl);
+
+    figcaptionModal.innerText = 'éditer';
+
+    const figureContent = `<div class="icon-div-style icon-div-arrows icon-div-style-not-shown">
+    <i class="fa-solid fa-arrows-up-down-left-right icon-style"></i></div>
+    <div class="icon-div-style icon-div-trash icon-div-style-shown">
+    <i class="fa-regular fa-trash-can icon-style"></i></div>`;
+
+    figureModal.appendChild(imageModal);
+    figureModal.appendChild(figcaptionModal);
+    figureModal.insertAdjacentHTML('afterbegin', figureContent);
+    pictures.appendChild(figureModal);
 }
+
+/*const figureContentWithArrows = `<div class="icon-div-style icon-div-arrows">
+<i class="fa-solid fa-arrows-up-down-left-right icon-style"></i></div>`;
+document.querySelector('.pictures figure:first-child').insertAdjacentHTML('afterbegin', figureContentWithArrows);*/
+
+///////////////
+
+let modal = null;
+
+function openModal(e) {
+    e.preventDefault();
+    modal = document.querySelector('aside');
+    modal.style.display = null;
+    modal.addEventListener('click', closeModal);
+    modal.querySelector('.close-icon').addEventListener('click', closeModal);
+    modal.querySelector('.js-modal-stop').addEventListener('click', stopPropagation);
+}
+
+function closeModal(e) {
+    if (modal === null) return
+    e.preventDefault();
+    modal.style.display = 'none';
+    modal.removeEventListener('click', closeModal);
+    modal.querySelector('.close-icon').removeEventListener('click', closeModal);
+    modal.querySelector('.js-modal-stop').removeEventListener('click', stopPropagation);
+    modal = null;
+}
+
+function stopPropagation(e) {
+    e.stopPropagation();
+}
+
+window.addEventListener('keydown', function (e) {
+    if (e.key === "Escape" || e.key === "Esc") {
+        closeModal(e);
+    }
+})
