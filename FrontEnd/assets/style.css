@@ -188,21 +188,21 @@ a {
 	margin-top: 80px;
 }
 
-#contact form, #login form {
+#contact form, #login form, .form-layout {
 	text-align: left;
-	margin-top:30px;
+	margin-top: 30px;
 	display: flex;
 	flex-direction: column;
 }
 
-#contact input, #login input {
+#contact input, #login input, #add-photo input, #category {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-#contact label, #login label {
+#contact label, #login label, #add-photo label {
 	margin: 2em 0 1em 0;
 }
 
@@ -332,16 +332,16 @@ footer nav ul {
 	overflow: scroll;
 }
 
-.close-icon {
+.button-icon-style {
 	cursor: pointer;
 	border: none;
 	background: #fff;
-	position: relative;
-	left: 320px;
+	font-size: 20px;
 }
 
-.fa-xmark {
-	font-size: 20px;
+.close-icon, .close-icon2 {
+	position: relative;
+	left: 320px;
 }
 
 h3 {
@@ -406,15 +406,99 @@ h3 {
 	text-align: left;
 }
 
-.submit-button {
-	margin: 40px 0 30px 0;
-	width: 240px;
+#add-photo-button a {
+	color: #fff;
+}
+
+.add-photo-submit-button {
+	margin: auto;
+	margin-top: 40px;
+	margin-bottom: 30px;
+	width: 200px;
 	text-align: center;
-	padding-left: 40px;
-	padding-right: 40px;
+	padding: 15px 30px 15px 30px;
 }
 
 .delete-gallery {
 	font-family: 'Syne';
 	color: #D65353;
+}
+
+/* add photo modal style */
+
+.form-layout-file {
+	width: 100%;
+	align-items: center;
+	background: #E8F1F7;
+	margin-top: 50px;
+}
+
+.new-image-style {
+	width: 30%;
+	object-fit: contain;
+	z-index: 3;
+	margin-top: -50px;
+}
+
+.form-layout-file span {
+	font-size: 10px;
+	position: relative;
+	top: -50px;
+	margin-bottom: -20px;
+}
+
+#add-photo {
+	width: 500px;
+	margin: auto;
+}
+
+.form-layout-infos {
+	border-bottom: 1px solid #B3B3B3;
+	padding-bottom: 45px;
+	margin-top: 30px;
+}
+
+.return-icon {
+	position: relative;
+	left: -320px;
+}
+
+.landscape-icon {
+	margin-top: 30px;
+	margin-bottom: -10px;
+	width: 80px;
+}
+
+#add-photo-label {
+	display: flex;
+	justify-content: center;
+    align-items: center;
+	background: #CBD6DC;
+	border-color: #CBD6DC;
+	color: #306685;
+	width: 220px;
+	height: 40px;
+	text-align: center;
+	border-radius: 60px;
+	z-index: 2;
+}
+
+#upfile {
+	position: relative;
+	top: -47px;
+	right: -90px;
+	z-index: 1;
+	opacity: 0;
+}
+
+#title, #category {
+	font-family: 'Work Sans';
+	font-size: 14px;
+	padding-left: 10px;
+}
+
+.validate-submit-button {
+	cursor: pointer;
+	align-self: center;
+	background: #A7A7A7;
 }

@@ -84,14 +84,52 @@
 	<!-- photo gallery modal -->
 	<aside id="photo-gallery-modal" class="modal-background" style="display: none;">
 		<div class="modal-window js-modal-stop">
-			<button class="close-icon">
+			<button class="close-icon button-icon-style">
 				<i class="fa-solid fa-xmark"></i>
 			</button>
 			<h3>Galerie photo</h3>
 			<div class="pictures">
 			</div>
-			<button class="submit-button">Ajouter une photo</button>
+			<div id="add-photo-button" class="submit-button add-photo-submit-button">
+				<a href="#add-photo-modal">
+					Ajouter une photo
+				</a>
+			</div>
 			<p class="delete-gallery">Supprimer la galerie</p>
+		</div>
+	</aside>
+
+	<!-- add photo modal -->
+	<aside id="add-photo-modal" class="modal-background" style="display: none;">
+		<div class="modal-window js-modal-stop2">
+			<button class="return-icon button-icon-style">
+				<i class="fa-solid fa-arrow-left"></i>
+			</button>
+			<button class="close-icon2 button-icon-style">
+				<i class="fa-solid fa-xmark"></i>
+			</button>
+			<h3>Ajout photo</h3>
+			<form id="add-photo">
+				<div class="form-layout form-layout-file">
+					<img src="./assets/icons/landscape.png" alt="Icône de payage" class="landscape-icon">
+					<label id="add-photo-label" for="upfile">+
+						Ajouter photo</label>
+					<input type="file" name="image" id="upfile" accept="image/png, image/jpeg" required>
+					<span>jpg, png : 4mo max</span>
+				</div>
+				<div class="form-layout form-layout-infos">
+					<label for="title">Titre</label>
+					<input type="text" name="title" id="title" required>
+					<label for="category">Catégorie</label>
+					<select name="category" id="category">
+						<option value="1">Objets</option>
+						<option value="2">Appartements</option>
+						<option value="3">Hotels & restaurants</option>
+					</select>
+				</div>
+				<button type="submit"
+					class="submit-button add-photo-submit-button validate-submit-button">Valider</button>
+			</form>
 		</div>
 	</aside>
 </body>

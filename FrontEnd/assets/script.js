@@ -3,6 +3,7 @@ fetch('http://localhost:5678/api/works')
     .then((response) => {
         if (!response.ok) {
             throw new Error('Network response was not OK');
+        } else if (response === 201) {
         }
         return response.json();
     })
@@ -13,7 +14,7 @@ fetch('http://localhost:5678/api/works')
             showProjects(project); // show all projects
         }
 
-        ////
+        /////////////// 
         if (localStorage.getItem('token')) {
             editHomepage();
 
@@ -29,10 +30,10 @@ fetch('http://localhost:5678/api/works')
             const firstArrowsIcon = document.querySelector('.icon-div-arrows:first-child');
             firstArrowsIcon.classList.replace('icon-div-style-not-shown', 'icon-div-style-shown');
 
-            const modalDeletedElement = Array.from((document.querySelectorAll('.gallery figure')));
-            console.log(modalDeletedElement);
-            const galleryDeletedElement = Array.from((document.querySelectorAll('.pictures figure')))
-            console.log(galleryDeletedElement);
+            const modalElements = Array.from((document.querySelectorAll('.gallery figure')));
+            //console.log(modalDeletedElement);
+            const galleryElements = Array.from((document.querySelectorAll('.pictures figure')))
+            //console.log(galleryDeletedElement);
 
             const trashIcons = document.querySelectorAll('.icon-div-trash');
             //console.log(trashIcons);
@@ -43,20 +44,95 @@ fetch('http://localhost:5678/api/works')
 
                     deleteRequest(id);
 
-                    for (let element of modalDeletedElement) {
+                    for (let element of modalElements) {
                         if (id === (element.getAttribute('id'))) {
                             element.remove();
                         }
                     }
-                    for (let element of galleryDeletedElement) {
+                    for (let element of galleryElements) {
                         if (id === (element.getAttribute('id'))) {
                             element.remove();
                         }
                     }
                 })
             });
+
+            const addPhotoButton = document.querySelector('#add-photo-button');
+            addPhotoButton.addEventListener('click', openAddPhotoModal);
+
+            // preview image before upload
+            const upFile = document.querySelector('#upfile');
+            const newPhoto = document.createElement('img');
+            const reader = new FileReader();
+
+            function modifyNewPhotoSrc() {
+                newPhoto.src = reader.result;
+            };
+
+            function addListenerToReader(reader) {
+                reader.addEventListener('load', modifyNewPhotoSrc);
+            };
+
+            function previewPhoto() {
+                const selectedFile = upFile.files[0];
+                if (selectedFile) {
+                    newPhoto.classList.add('new-image-style');
+                    //document.querySelector('.form-layout-file').innerHTML = "";
+                    document.querySelector('.landscape-icon').remove();
+                    document.querySelector('#add-photo-label').remove();
+                    document.querySelector('.form-layout-file span').remove();
+                    document.querySelector('#upfile').style.top = '50px';
+                    document.querySelector('.form-layout-file').appendChild(newPhoto);
+                    addListenerToReader(reader);
+                    reader.readAsDataURL(selectedFile);
+                }
+            }
+            upFile.addEventListener('change', previewPhoto);
         }
-        ////
+
+        // request to add a new project
+        const form = document.querySelector('#add-photo');
+
+        /*const upFile = document.querySelector('#upfile').value;
+        const title = document.querySelector('#title').value;
+
+        if (upFile && title) {
+            const validateSubmitButton = document.querySelector('.validate-submit-button')
+            validateSubmitButton.style.background = '#1D6154';
+        }*/
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newProject = new FormData(form);
+
+            let token = localStorage.getItem('token');
+
+            fetch('http://localhost:5678/api/works', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: newProject,
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not OK');
+                    };
+                    return response.json();
+                })
+                .then((value) => {
+                    console.log(value);
+                    showImages(value);
+                    showProjects(value);
+                    form.reset();
+                    newForm();
+                })
+                .catch((error) => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                })
+        });
+
+        ///////////////
 
         fetch('http://localhost:5678/api/categories')
             .then((response) => {
@@ -193,7 +269,7 @@ let modal = null;
 
 function openModal(e) {
     e.preventDefault();
-    modal = document.querySelector('aside');
+    modal = document.querySelector('#photo-gallery-modal');
     modal.style.display = null;
     modal.addEventListener('click', closeModal);
     modal.querySelector('.close-icon').addEventListener('click', closeModal);
@@ -203,6 +279,7 @@ function openModal(e) {
 function closeModal(e) {
     if (modal === null) return
     e.preventDefault();
+    modal = document.querySelector('#photo-gallery-modal');
     modal.style.display = 'none';
     modal.removeEventListener('click', closeModal);
     modal.querySelector('.close-icon').removeEventListener('click', closeModal);
@@ -236,4 +313,45 @@ function deleteRequest(id) {
         .catch((error) => {
             console.error('There has been a problem with your fetch operation:', error);
         })
+}
+
+///////////////
+
+function openAddPhotoModal(e) {
+    e.preventDefault();
+    document.querySelector('#photo-gallery-modal').style.display = 'none';
+    modal = document.querySelector('#add-photo-modal');
+    modal.style.display = null;
+    modal.addEventListener('click', closeAddPhotoModal);
+    modal.querySelector('.close-icon2').addEventListener('click', closeAddPhotoModal);
+    modal.querySelector('.return-icon').addEventListener('click', returnToGalleryModal);
+    modal.querySelector('.js-modal-stop2').addEventListener('click', stopPropagation);
+}
+
+function closeAddPhotoModal(e) {
+    if (modal === null) return
+    e.preventDefault();
+    modal.style.display = 'none';
+    modal.removeEventListener('click', closeAddPhotoModal);
+    modal.querySelector('.close-icon2').removeEventListener('click', closeAddPhotoModal);
+    modal.querySelector('.js-modal-stop2').removeEventListener('click', stopPropagation);
+    modal = null;
+}
+
+function returnToGalleryModal(e) {
+    e.preventDefault();
+    modal.style.display = 'none';
+    document.querySelector('#photo-gallery-modal').style.display = null;
+}
+
+///////////////
+
+function newForm() {
+    const newForm = document.querySelector('.form-layout-file');
+    newForm.innerHTML = "";
+    const newFormContent = `<img src="./assets/icons/landscape.png" alt="Icône de payage" class="landscape-icon">				
+    <label id="add-photo-label" for="upfile" accept="image/png, image/jpeg">+Ajouter photo</label>
+	<input type="file" name="image" id="upfile">
+    <span>jpg, png : 4mo max</span>`;
+    newForm.insertAdjacentHTML("afterbegin", newFormContent);
 }
