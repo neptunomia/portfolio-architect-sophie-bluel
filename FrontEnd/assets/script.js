@@ -1,185 +1,77 @@
+const works = [];
+let token = localStorage.getItem('token');
+
+fetch('http://localhost:5678/api/categories')
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error('Network response was not OK');
+        }
+        return response.json();
+    })
+    .then((categories) => {
+        //console.log(categories);
+        for (let category of categories) {
+            createFilters(category);
+        }
+    })
+    .catch((error) => {
+        console.error('There has been a problem with your fetch operation:', error);
+    })
+
 // queries to show and filter projects
 fetch('http://localhost:5678/api/works')
     .then((response) => {
         if (!response.ok) {
             throw new Error('Network response was not OK');
-        } else if (response === 201) {
         }
         return response.json();
     })
     .then((projects) => {
-        //console.log(projects);
+        console.log(projects);
+        projects.forEach(project => {
+            works.push(project);
+        })
 
         for (let project of projects) {
-            showProjects(project); // show all projects
+            showProjects(project);
+            showImages(project);
         }
-
-        /////////////// 
-        if (localStorage.getItem('token')) {
-            editHomepage();
-
-            const galleryEditButton = document.querySelector('.portfolio-title a');
-            galleryEditButton.setAttribute('href', '#photo-gallery-modal');
-            //console.log(galleryEditButton);
-            galleryEditButton.addEventListener('click', openModal);
-
-            for (let project of projects) {
-                showImages(project);
-            }
-
-            const firstArrowsIcon = document.querySelector('.icon-div-arrows:first-child');
-            firstArrowsIcon.classList.replace('icon-div-style-not-shown', 'icon-div-style-shown');
-
-            const modalElements = Array.from((document.querySelectorAll('.gallery figure')));
-            //console.log(modalDeletedElement);
-            const galleryElements = Array.from((document.querySelectorAll('.pictures figure')))
-            //console.log(galleryDeletedElement);
-
-            const trashIcons = document.querySelectorAll('.icon-div-trash');
-            //console.log(trashIcons);
-            trashIcons.forEach((trashIcon) => {
-                trashIcon.addEventListener('click', function () {
-                    let id = trashIcon.getAttribute('id');
-                    //console.log(id);
-
-                    deleteRequest(id);
-
-                    for (let element of modalElements) {
-                        if (id === (element.getAttribute('id'))) {
-                            element.remove();
-                        }
-                    }
-                    for (let element of galleryElements) {
-                        if (id === (element.getAttribute('id'))) {
-                            element.remove();
-                        }
-                    }
-                })
-            });
-
-            const addPhotoButton = document.querySelector('#add-photo-button');
-            addPhotoButton.addEventListener('click', openAddPhotoModal);
-
-            // preview image before upload
-            const upFile = document.querySelector('#upfile');
-            const newPhoto = document.createElement('img');
-            const reader = new FileReader();
-
-            function modifyNewPhotoSrc() {
-                newPhoto.src = reader.result;
-            };
-
-            function addListenerToReader(reader) {
-                reader.addEventListener('load', modifyNewPhotoSrc);
-            };
-
-            function previewPhoto() {
-                const selectedFile = upFile.files[0];
-                if (selectedFile) {
-                    newPhoto.classList.add('new-image-style');
-                    //document.querySelector('.form-layout-file').innerHTML = "";
-                    document.querySelector('.landscape-icon').remove();
-                    document.querySelector('#add-photo-label').remove();
-                    document.querySelector('.form-layout-file span').remove();
-                    document.querySelector('#upfile').style.top = '50px';
-                    document.querySelector('.form-layout-file').appendChild(newPhoto);
-                    addListenerToReader(reader);
-                    reader.readAsDataURL(selectedFile);
-                }
-            }
-            upFile.addEventListener('change', previewPhoto);
+        if ((document.querySelector('.gallery').innerHTML != '') && document.querySelector('.pictures').innerHTML != '') {
+            addArrows();
         }
-
-        // request to add a new project
-        const form = document.querySelector('#add-photo');
-
-        /*const upFile = document.querySelector('#upfile').value;
-        const title = document.querySelector('#title').value;
-
-        if (upFile && title) {
-            const validateSubmitButton = document.querySelector('.validate-submit-button')
-            validateSubmitButton.style.background = '#1D6154';
-        }*/
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const newProject = new FormData(form);
-
-            let token = localStorage.getItem('token');
-
-            fetch('http://localhost:5678/api/works', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: newProject,
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not OK');
-                    };
-                    return response.json();
-                })
-                .then((value) => {
-                    console.log(value);
-                    showImages(value);
-                    showProjects(value);
-                    form.reset();
-                    newForm();
-                })
-                .catch((error) => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                })
-        });
-
-        ///////////////
-
-        fetch('http://localhost:5678/api/categories')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not OK');
-                }
-                return response.json();
-            })
-            .then((categories) => {
-                //console.log(categories);
-
-                for (let category of categories) {
-                    createFilters(category);
-                }
-
-                const filters = document.querySelectorAll('.filter');
-                //console.log(filters);
-
-                filters.forEach((filter, category) => { // loop to display the right projects on click based on filter and category
-                    filter.addEventListener('click', function () {
-                        document.querySelector('.gallery').innerHTML = '';
-                        filter.classList.add('selected-filter');
-
-                        for (let project of projects) {
-                            if (category === project.categoryId) {
-                                //console.log(category);
-                                showProjects(project);
-                            } else if (category === 0) {
-                                //console.log(category);
-                                showProjects(project);
-                            }
-                        };
-
-                        const selectedFilter = document.querySelector('.selected-filter');
-                        selectedFilter.classList.remove('selected-filter');
-                    });
-                });
-            })
-
-            .catch((error) => {
-                console.error('There has been a problem with your fetch operation:', error);
-            })
+        filter();
+        deleteProject();
     })
 
     .catch((error) => {
         console.error('There has been a problem with your fetch operation:', error);
     })
+
+function viewProjects() {
+    document.querySelector('.gallery').innerHTML = '';
+    document.querySelector('.pictures').innerHTML = '';
+    fetch('http://localhost:5678/api/works')
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not OK');
+            }
+            return response.json();
+        })
+        .then((projects) => {
+
+            for (let project of projects) {
+                showProjects(project);
+                showImages(project);
+            }
+            if ((document.querySelector('.gallery').innerHTML != '') && document.querySelector('.pictures').innerHTML != '') {
+                addArrows();
+            }
+            deleteProject();
+        })
+        .catch((error) => {
+            console.error('There has been a problem with your fetch operation:', error);
+        })
+}
 
 ////
 function showProjects(project) {
@@ -208,6 +100,30 @@ function createFilters(category) {
     newLi.classList.add('filter');
     filters.appendChild(newLi);
 };
+
+function filter() {
+    const filters = document.querySelectorAll('.filter');
+    console.log(filters);
+    filters.forEach((filter, category) => { // loop to display the right projects on click based on filter and category
+        filter.addEventListener('click', function () {
+            const selectedFilter = document.querySelector('.selected-filter');
+            selectedFilter.classList.remove('selected-filter');
+            filter.classList.add('selected-filter');
+
+            document.querySelector('.gallery').innerHTML = '';
+
+            for (let work of works) {
+                if (category === work.categoryId) {
+                    console.log(category);
+                    showProjects(work);
+                } else if (category === 0) {
+                    console.log(category);
+                    showProjects(work);
+                }
+            };
+        });
+    });
+}
 
 // change the homepage when the user is logged in
 function editHomepage() {
@@ -263,6 +179,11 @@ function showImages(project) {
     pictures.appendChild(figureModal);
 }
 
+function addArrows() {
+    const firstArrowsIcon = document.querySelector('.icon-div-arrows:first-child');
+    firstArrowsIcon.classList.replace('icon-div-style-not-shown', 'icon-div-style-shown');
+};
+
 ///////////////
 
 let modal = null;
@@ -297,24 +218,6 @@ window.addEventListener('keydown', function (e) {
     }
 })
 
-function deleteRequest(id) {
-    let token = localStorage.getItem('token');
-    fetch('http://localhost:5678/api/works/' + id, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
-    })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error('Network response was not OK');
-            };
-        })
-        .catch((error) => {
-            console.error('There has been a problem with your fetch operation:', error);
-        })
-}
-
 ///////////////
 
 function openAddPhotoModal(e) {
@@ -331,6 +234,7 @@ function openAddPhotoModal(e) {
 function closeAddPhotoModal(e) {
     if (modal === null) return
     e.preventDefault();
+    modal = document.querySelector('#add-photo-modal');
     modal.style.display = 'none';
     modal.removeEventListener('click', closeAddPhotoModal);
     modal.querySelector('.close-icon2').removeEventListener('click', closeAddPhotoModal);
@@ -346,12 +250,137 @@ function returnToGalleryModal(e) {
 
 ///////////////
 
-function newForm() {
-    const newForm = document.querySelector('.form-layout-file');
-    newForm.innerHTML = "";
-    const newFormContent = `<img src="./assets/icons/landscape.png" alt="Icône de payage" class="landscape-icon">				
-    <label id="add-photo-label" for="upfile" accept="image/png, image/jpeg">+Ajouter photo</label>
-	<input type="file" name="image" id="upfile">
-    <span>jpg, png : 4mo max</span>`;
-    newForm.insertAdjacentHTML("afterbegin", newFormContent);
+if (localStorage.getItem('token')) {
+    editHomepage();
+    document.querySelector('.filters').style.display = 'none';
+    const loginButton = document.querySelector('.login');
+    loginButton.innerText = 'logout';
+    loginButton.addEventListener('click', () => {
+        localStorage.clear();
+        location.reload();
+    })
+
+    const galleryEditButton = document.querySelector('.portfolio-title a');
+    galleryEditButton.setAttribute('href', '#photo-gallery-modal');
+    //console.log(galleryEditButton);
+    galleryEditButton.addEventListener('click', openModal);
 }
+
+
+
+//////// request to add a new project
+const form = document.querySelector('#add-photo');
+
+/*const upFile = document.querySelector('#upfile').value;
+const title = document.querySelector('#title').value;
+
+if (upFile && title) {
+    const validateSubmitButton = document.querySelector('.validate-submit-button')
+    validateSubmitButton.style.background = '#1D6154';
+}*/
+
+function addNewProject() {
+    const newProject = new FormData(form);
+
+    fetch('http://localhost:5678/api/works', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+        body: newProject,
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not OK');
+            };
+            return response.json();
+        })
+        .then((value) => {
+            console.log(value);
+            viewProjects();
+            form.reset();
+            document.querySelector('.landscape-icon').style.display = null;
+            document.querySelector('#add-photo-label').style.display = null;
+            document.querySelector('.form-layout-file span').style.display = null;
+        })
+        .catch((error) => {
+            console.error('There has been a problem with your fetch operation:', error);
+        })
+}
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    addNewProject();
+    document.querySelector('.new-image-style').style.display = 'none';
+});
+
+function deleteRequest(id) {
+    fetch('http://localhost:5678/api/works/' + id, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+        },
+    })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not OK');
+            };
+        })
+        .then(() => {
+            viewProjects();
+        })
+        .catch((error) => {
+            console.error('There has been a problem with your fetch operation:', error);
+        })
+}
+
+function deleteProject() {
+    let trashIcons = document.querySelectorAll('.icon-div-trash');
+    console.log(trashIcons);
+    trashIcons.forEach((trashIcon) => {
+        trashIcon.addEventListener('click', function () {
+            console.log(trashIcon);
+            let id = trashIcon.getAttribute('id');
+            console.log(id);
+
+            deleteRequest(id);
+        })
+    })
+};
+
+//////
+
+const addPhotoButton = document.querySelector('#add-photo-button');
+addPhotoButton.addEventListener('click', openAddPhotoModal);
+
+// preview image before upload
+const upFile = document.querySelector('#upfile');
+const newPhoto = document.querySelector('.new-image-style');
+const reader = new FileReader();
+
+function modifyNewPhotoSrc() {
+    newPhoto.src = reader.result;
+};
+
+function addListenerToReader(reader) {
+    reader.addEventListener('load', modifyNewPhotoSrc);
+};
+
+function previewPhoto() {
+    const selectedFile = upFile.files[0];
+    if (selectedFile) {
+        //newPhoto.classList.add('new-image-style');
+        //document.querySelector('.form-layout-file').innerHTML = "";
+        newPhoto.style.display = null;
+        document.querySelector('.landscape-icon').style.display = 'none';
+        document.querySelector('#add-photo-label').style.display = 'none';
+        document.querySelector('.form-layout-file span').style.display = 'none';
+        document.querySelector('#upfile').style.top = '50px';
+        // document.querySelector('.form-layout-file').appendChild(newPhoto);
+        addListenerToReader(reader);
+        reader.readAsDataURL(selectedFile);
+    }
+}
+upFile.addEventListener('change', previewPhoto);
+
+////////

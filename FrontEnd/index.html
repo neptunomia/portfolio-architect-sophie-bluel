@@ -23,7 +23,7 @@
 				<ul>
 					<li><a href="#portfolio">projets</a></li>
 					<li><a href="#contact">contact</a></li>
-					<li><a href="./login.html">login</a></li>
+					<li class="login"><a href="./login.html">login</a></li>
 					<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 				</ul>
 			</nav>
@@ -54,7 +54,7 @@
 				<h2>Mes Projets</h2>
 			</div>
 			<ul class="filters">
-				<li class="filter">Tous</li>
+				<li class="filter selected-filter">Tous</li>
 			</ul>
 			<div class="gallery"></div>
 		</section>
@@ -95,7 +95,7 @@
 					Ajouter une photo
 				</a>
 			</div>
-			<p class="delete-gallery">Supprimer la galerie</p>
+			<div class="delete-gallery">Supprimer la galerie</div>
 		</div>
 	</aside>
 
@@ -112,14 +112,16 @@
 			<form id="add-photo">
 				<div class="form-layout form-layout-file">
 					<img src="./assets/icons/landscape.png" alt="Icône de payage" class="landscape-icon">
-					<label id="add-photo-label" for="upfile">+
-						Ajouter photo</label>
-					<input type="file" name="image" id="upfile" accept="image/png, image/jpeg" required>
+					<label id="add-photo-label" for="upfile">
+						+ Ajouter photo
+					</label>
+					<input type="file" name="image" id="upfile" accept="image/png, image/jpeg">
 					<span>jpg, png : 4mo max</span>
+					<img class="new-image-style" src="" alt="Photo à télécharger" style="display: none;">
 				</div>
 				<div class="form-layout form-layout-infos">
 					<label for="title">Titre</label>
-					<input type="text" name="title" id="title" required>
+					<input type="text" name="title" id="title">
 					<label for="category">Catégorie</label>
 					<select name="category" id="category">
 						<option value="1">Objets</option>
