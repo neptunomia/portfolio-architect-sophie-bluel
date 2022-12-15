@@ -336,7 +336,7 @@ function deleteRequest(id) {
 
 function deleteProject() {
     let trashIcons = document.querySelectorAll('.icon-div-trash');
-    console.log(trashIcons);
+    //console.log(trashIcons);
     trashIcons.forEach((trashIcon) => {
         trashIcon.addEventListener('click', function () {
             console.log(trashIcon);
@@ -347,6 +347,33 @@ function deleteProject() {
         })
     })
 };
+
+function deleteAllProjects() {
+    const allProjects = document.querySelectorAll('.pictures figure');
+    console.log(allProjects);
+    allProjects.forEach((project) => {
+        let id = project.getAttribute('id');
+        fetch('http://localhost:5678/api/works/' + id, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not OK');
+                };
+            })
+            .then(() => {
+                viewProjects();
+            })
+            .catch((error) => {
+                console.error('There has been a problem with your fetch operation:', error);
+            })
+    })
+}
+
+document.querySelector('.delete-gallery').addEventListener('click', deleteAllProjects);
 
 //////
 
