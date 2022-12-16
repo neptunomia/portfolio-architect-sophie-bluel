@@ -199,7 +199,7 @@ a {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
-	box-shadow: 0px 4px 14px rgba(0, 0, 0 , 0.2);
+	box-shadow: 0px 4px 14px rgba(0, 0, 0 , 0.1);
 }
 
 #contact label, #login label, #add-photo label {
@@ -208,7 +208,7 @@ a {
 
 #contact textarea {
 	border: none;
-	box-shadow: 0px 4px 14px rgba(0, 0, 0 , 0.2);
+	box-shadow: 0px 4px 14px rgba(0, 0, 0 , 0.1);
 }
 
 input[type="submit"], .submit-button {
