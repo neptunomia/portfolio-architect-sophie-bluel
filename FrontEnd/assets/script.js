@@ -271,14 +271,6 @@ if (localStorage.getItem('token')) {
 //////// request to add a new project
 const form = document.querySelector('#add-photo');
 
-/*const upFile = document.querySelector('#upfile').value;
-const title = document.querySelector('#title').value;
-
-if (upFile && title) {
-    const validateSubmitButton = document.querySelector('.validate-submit-button')
-    validateSubmitButton.style.background = '#1D6154';
-}*/
-
 function addNewProject() {
     const newProject = new FormData(form);
 
@@ -306,11 +298,39 @@ function addNewProject() {
         .catch((error) => {
             console.error('There has been a problem with your fetch operation:', error);
         })
+
 }
+
+// create a paragraph for authentication error
+function checkAddForm() {
+    const upFile = document.querySelector('#upfile');
+    const title = document.querySelector('#title');
+    if (!(upFile.files[0])) {
+        alert('Un fichier doit être sélectionné.');
+        return false;
+    }
+    if (title.value == "") {
+        alert('Le champ "Titre" doit être rempli.');
+        return false
+    }
+    return true;
+}
+
+form.addEventListener('input', () => {
+    const upFile = document.querySelector('#upfile');
+    const title = document.querySelector('#title');
+    if (upFile.files[0] && title.value) {
+        document.querySelector('.validate-submit-button').style.background = '#1D6154';
+    } else {
+        document.querySelector('.validate-submit-button').style.background = '#A7A7A7';
+    }
+})
 
 form.addEventListener('submit', (e) => {
     e.preventDefault();
-    addNewProject();
+    if (checkAddForm() === true) {
+        addNewProject();
+    }
     document.querySelector('.new-image-style').style.display = 'none';
 });
 
@@ -380,7 +400,7 @@ document.querySelector('.delete-gallery').addEventListener('click', deleteAllPro
 const addPhotoButton = document.querySelector('#add-photo-button');
 addPhotoButton.addEventListener('click', openAddPhotoModal);
 
-// preview image before upload
+///// preview image before upload
 const upFile = document.querySelector('#upfile');
 const newPhoto = document.querySelector('.new-image-style');
 const reader = new FileReader();
@@ -395,19 +415,25 @@ function addListenerToReader(reader) {
 
 function previewPhoto() {
     const selectedFile = upFile.files[0];
-    if (selectedFile) {
-        //newPhoto.classList.add('new-image-style');
-        //document.querySelector('.form-layout-file').innerHTML = "";
-        newPhoto.style.display = null;
-        document.querySelector('.landscape-icon').style.display = 'none';
-        document.querySelector('#add-photo-label').style.display = 'none';
-        document.querySelector('.form-layout-file span').style.display = 'none';
-        document.querySelector('#upfile').style.top = '50px';
-        // document.querySelector('.form-layout-file').appendChild(newPhoto);
-        addListenerToReader(reader);
-        reader.readAsDataURL(selectedFile);
-    }
-}
-upFile.addEventListener('change', previewPhoto);
+    const upFileSize = 4000000;
+    const upFileTypes = ["image/png", "image/jpeg"];
 
-////////
+    //console.log(selectedFile.size);
+    //console.log(selectedFile.type);
+
+    if ((selectedFile.size > upFileSize) || !(upFileTypes.includes(selectedFile.type))) {
+        alert('Le fichier ne doit pas dépasser 4 mo et seuls les fichiers au format jpg ou jpeg sont acceptés.');
+        return;
+    }
+
+    addListenerToReader(reader);
+    reader.readAsDataURL(selectedFile);
+
+    newPhoto.style.display = null;
+    document.querySelector('.landscape-icon').style.display = 'none';
+    document.querySelector('#add-photo-label').style.display = 'none';
+    document.querySelector('.form-layout-file span').style.display = 'none';
+    document.querySelector('#upfile').style.top = '50px';
+}
+
+upFile.addEventListener('change', previewPhoto);

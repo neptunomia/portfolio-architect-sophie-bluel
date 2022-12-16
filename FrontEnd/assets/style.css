@@ -271,7 +271,7 @@ footer nav ul {
 	color: #3D3D3D;
 }
 
-.error-message {
+.error-message, .error-message2 {
 	color: #D65353;
 	font-family: 'Syne';
 	font-size: 16px;
