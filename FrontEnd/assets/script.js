@@ -1,7 +1,8 @@
-const works = [];
+const projects = [];
+const categories = [];
 let token = localStorage.getItem('token');
 
-///// category display
+///// categories and projects display by default
 fetch('http://localhost:5678/api/categories')
     .then((response) => {
         if (!response.ok) {
@@ -15,43 +16,14 @@ fetch('http://localhost:5678/api/categories')
             createFilters(category);
         }
     })
+    .then(() => {
+        viewProjectsByDefault();
+    })
     .catch((error) => {
         console.error('There has been a problem with your fetch operation:', error);
     })
 
-///// display of projects by default
-fetch('http://localhost:5678/api/works')
-    .then((response) => {
-        if (!response.ok) {
-            throw new Error('Network response was not OK');
-        }
-        return response.json();
-    })
-    .then((projects) => {
-        console.log(projects);
-        projects.forEach(project => {
-            works.push(project);
-        })
-
-        for (let project of projects) {
-            showProjects(project);
-            showImages(project);
-        }
-        if ((document.querySelector('.gallery').innerHTML != '') && document.querySelector('.pictures').innerHTML != '') {
-            addArrows();
-        }
-        filter();
-        deleteProject();
-    })
-
-    .catch((error) => {
-        console.error('There has been a problem with your fetch operation:', error);
-    })
-
-///// function to update projects
-function viewProjects() {
-    document.querySelector('.gallery').innerHTML = '';
-    document.querySelector('.pictures').innerHTML = '';
+function viewProjectsByDefault() {
     fetch('http://localhost:5678/api/works')
         .then((response) => {
             if (!response.ok) {
@@ -59,8 +31,11 @@ function viewProjects() {
             }
             return response.json();
         })
-        .then((projects) => {
-
+        .then((works) => {
+            console.log(works);
+            works.forEach(work => {
+                projects.push(work);
+            })
             for (let project of projects) {
                 showProjects(project);
                 showImages(project);
@@ -68,11 +43,27 @@ function viewProjects() {
             if ((document.querySelector('.gallery').innerHTML != '') && document.querySelector('.pictures').innerHTML != '') {
                 addArrows();
             }
+            filter();
             deleteProject();
         })
+
         .catch((error) => {
             console.error('There has been a problem with your fetch operation:', error);
         })
+}
+
+///// function to update projects
+function viewProjects() {
+    document.querySelector('.gallery').innerHTML = '';
+    document.querySelector('.pictures').innerHTML = '';
+    for (let project of projects) {
+        showProjects(project);
+        showImages(project);
+    }
+    if ((document.querySelector('.gallery').innerHTML != '') && document.querySelector('.pictures').innerHTML != '') {
+        addArrows();
+    }
+    deleteProject();
 }
 
 /////
@@ -99,27 +90,30 @@ function createFilters(category) { // in the DOM
     const newLi = document.createElement('li');
     newLi.innerText = category.name;
     newLi.classList.add('filter');
+    newLi.setAttribute('id', category.id);
     filters.appendChild(newLi);
 };
 
 function filter() {
     const filters = document.querySelectorAll('.filter');
-    console.log(filters);
-    filters.forEach((filter, category) => { // loop to display the right projects on click based on filter and category
+    //console.log(filters);
+    filters.forEach((filter) => { // loop to display the right projects on click based on filter and category
         filter.addEventListener('click', function () {
+            let id = filter.getAttribute('id');
+            console.log(id);
             const selectedFilter = document.querySelector('.selected-filter');
             selectedFilter.classList.remove('selected-filter');
             filter.classList.add('selected-filter');
 
             document.querySelector('.gallery').innerHTML = '';
 
-            for (let work of works) {
-                if (category === work.categoryId) {
-                    console.log(category);
-                    showProjects(work);
-                } else if (category === 0) {
-                    console.log(category);
-                    showProjects(work);
+            for (let project of projects) {
+                if (id == project.categoryId) {
+                    console.log(id);
+                    showProjects(project);
+                } else if (id == 0) {
+                    console.log(id);
+                    showProjects(project);
                 }
             };
         });
@@ -223,6 +217,9 @@ function closeAddPhotoModal(e) {
     e.preventDefault();
     modal = document.querySelector('#add-photo-modal');
     modal.style.display = 'none';
+
+    resetAddPhotoForm();
+
     modal.removeEventListener('click', closeAddPhotoModal);
     modal.querySelector('.close-icon2').removeEventListener('click', closeAddPhotoModal);
     modal.querySelector('.js-modal-stop2').removeEventListener('click', stopPropagation);
@@ -233,6 +230,7 @@ function returnToGalleryModal(e) {
     e.preventDefault();
     modal.style.display = 'none';
     document.querySelector('#photo-gallery-modal').style.display = null;
+    resetAddPhotoForm();
 }
 
 /////
@@ -289,28 +287,30 @@ function addNewProject() {
         })
         .then((value) => {
             console.log(value);
+            projects.push(value);
+            resetAddPhotoForm();
+        })
+        .then(() => {
             viewProjects();
-            form.reset();
-            document.querySelector('.landscape-icon').style.display = null;
-            document.querySelector('#add-photo-label').style.display = null;
-            document.querySelector('.form-layout-file span').style.display = null;
         })
         .catch((error) => {
             console.error('There has been a problem with your fetch operation:', error);
         })
-
 }
+
+const messageError2 = `<p class="error-message2"></p>`;
+const divInfos = document.querySelector('.form-layout-infos');
+divInfos.insertAdjacentHTML("afterbegin", messageError2);
 
 function checkAddForm() {
     const upFile = document.querySelector('#upfile');
     const title = document.querySelector('#title');
-    if (!(upFile.files[0])) {
-        alert('Un fichier doit être sélectionné.');
+    if (!(upFile.files[0]) || !(title.value)) {
+        alert('Tous les champs doivent être remplis.');
+
+        resetAddPhotoForm();
+
         return false;
-    }
-    if (title.value == "") {
-        alert('Le champ "Titre" doit être rempli.');
-        return false
     }
     return true;
 }
@@ -329,8 +329,8 @@ form.addEventListener('submit', (e) => {
     e.preventDefault();
     if (checkAddForm() === true) {
         addNewProject();
+        console.log(projects);
     }
-    document.querySelector('.new-image-style').style.display = 'none';
 });
 
 /////
@@ -345,9 +345,6 @@ function deleteRequest(id) {
             if (!response.ok) {
                 throw new Error('Network response was not OK');
             };
-        })
-        .then(() => {
-            viewProjects();
         })
         .catch((error) => {
             console.error('There has been a problem with your fetch operation:', error);
@@ -364,6 +361,13 @@ function deleteProject() {
             console.log(id);
 
             deleteRequest(id);
+
+            let projectId = projects.findIndex(project => project.id == id);
+            console.log(projectId);
+            projects.splice(projectId, 1);
+            console.log(projects);
+
+            viewProjects();
         })
     })
 };
@@ -373,23 +377,15 @@ function deleteAllProjects() {
     console.log(allProjects);
     allProjects.forEach((project) => {
         let id = project.getAttribute('id');
-        fetch('http://localhost:5678/api/works/' + id, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Network response was not OK');
-                };
-            })
-            .then(() => {
-                viewProjects();
-            })
-            .catch((error) => {
-                console.error('There has been a problem with your fetch operation:', error);
-            })
+
+        deleteRequest(id);
+
+        let projectId = projects.findIndex(project => project.id == id);
+        console.log(projectId);
+        projects.splice(projectId, 1);
+        console.log(projects);
+
+        viewProjects();
     })
 }
 
@@ -397,38 +393,40 @@ document.querySelector('.delete-gallery').addEventListener('click', deleteAllPro
 
 ///// preview image before upload
 const upFile = document.querySelector('#upfile');
-const newPhoto = document.querySelector('.new-image-style');
-const reader = new FileReader();
+function viewPhoto() {
+    const newPhoto = document.querySelector('.new-image-style');
+    let selectedFile;
+    upFile.addEventListener('change', () => {
+        const newFile = upFile.files[0];
+        const upFileSize = 4000000;
+        const upFileTypes = ["image/png", "image/jpeg"];
 
-function modifyNewPhotoSrc() {
-    newPhoto.src = reader.result;
-};
+        if ((newFile.size > upFileSize) || !(upFileTypes.includes(newFile.type))) {
+            alert('Le fichier ne doit pas dépasser 4 mo et seuls les fichiers au format jpg ou jpeg sont acceptés.');
+            return;
+        }
+        const reader = new FileReader();
 
-function addListenerToReader(reader) {
-    reader.addEventListener('load', modifyNewPhotoSrc);
-};
+        reader.onload = () => {
+            selectedFile = reader.result;
+            newPhoto.setAttribute('src', selectedFile);
+        }
+        reader.readAsDataURL(upFile.files[0]);
 
-function previewPhoto() {
-    const selectedFile = upFile.files[0];
-    const upFileSize = 4000000;
-    const upFileTypes = ["image/png", "image/jpeg"];
-
-    //console.log(selectedFile.size);
-    //console.log(selectedFile.type);
-
-    if ((selectedFile.size > upFileSize) || !(upFileTypes.includes(selectedFile.type))) {
-        alert('Le fichier ne doit pas dépasser 4 mo et seuls les fichiers au format jpg ou jpeg sont acceptés.');
-        return;
-    }
-
-    addListenerToReader(reader);
-    reader.readAsDataURL(selectedFile);
-
-    newPhoto.style.display = null;
-    document.querySelector('.landscape-icon').style.display = 'none';
-    document.querySelector('#add-photo-label').style.display = 'none';
-    document.querySelector('.form-layout-file span').style.display = 'none';
-    document.querySelector('#upfile').style.top = '50px';
+        newPhoto.style.display = null;
+        document.querySelector('.landscape-icon').style.display = 'none';
+        document.querySelector('#add-photo-label').style.display = 'none';
+        document.querySelector('.form-layout-file span').style.display = 'none';
+        document.querySelector('#upfile').style.top = '50px';
+    })
 }
+viewPhoto();
 
-upFile.addEventListener('change', previewPhoto);
+function resetAddPhotoForm() {
+    document.querySelector('#add-photo').reset();
+    document.querySelector('.new-image-style').setAttribute('src', "");
+    document.querySelector('.new-image-style').style.display = 'none';
+    document.querySelector('.landscape-icon').style.display = null;
+    document.querySelector('#add-photo-label').style.display = null;
+    document.querySelector('.form-layout-file span').style.display = null;
+}
