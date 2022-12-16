@@ -424,7 +424,7 @@ viewPhoto();
 
 function resetAddPhotoForm() {
     document.querySelector('#add-photo').reset();
-    document.querySelector('.new-image-style').setAttribute('src', "");
+    document.querySelector('.new-image-style').setAttribute('src', "#");
     document.querySelector('.new-image-style').style.display = 'none';
     document.querySelector('.landscape-icon').style.display = null;
     document.querySelector('#add-photo-label').style.display = null;

@@ -199,7 +199,7 @@ a {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
-	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+	box-shadow: 0px 4px 14px rgba(0, 0, 0 , 0.2);
 }
 
 #contact label, #login label, #add-photo label {
@@ -208,7 +208,7 @@ a {
 
 #contact textarea {
 	border: none;
-	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+	box-shadow: 0px 4px 14px rgba(0, 0, 0 , 0.2);
 }
 
 input[type="submit"], .submit-button {
@@ -317,7 +317,7 @@ footer nav ul {
     display: flex;
     justify-content: center;
     align-items: center;
-	background: rgba(0, 0, 0, 0.8);
+	background: rgba(0, 0, 0 , 0.8);
 }
 
 .modal-window {
@@ -326,7 +326,6 @@ footer nav ul {
 	height: 740px;
 	padding: 35px 75px 35px 75px;
 	border-radius: 10px;
-	box-shadow: 5px rgba(0, 0, 0, 0.3);
 	text-align: center;
 	background: #fff;
 }
@@ -473,7 +472,7 @@ h3 {
 	justify-content: center;
     align-items: center;
 	background: #CBD6DC;
-	border-color: #CBD6DC;
+	border-color: transparent;
 	color: #306685;
 	width: 220px;
 	height: 40px;
