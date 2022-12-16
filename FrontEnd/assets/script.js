@@ -1,6 +1,7 @@
 const works = [];
 let token = localStorage.getItem('token');
 
+///// category display
 fetch('http://localhost:5678/api/categories')
     .then((response) => {
         if (!response.ok) {
@@ -18,7 +19,7 @@ fetch('http://localhost:5678/api/categories')
         console.error('There has been a problem with your fetch operation:', error);
     })
 
-// queries to show and filter projects
+///// display of projects by default
 fetch('http://localhost:5678/api/works')
     .then((response) => {
         if (!response.ok) {
@@ -47,6 +48,7 @@ fetch('http://localhost:5678/api/works')
         console.error('There has been a problem with your fetch operation:', error);
     })
 
+///// function to update projects
 function viewProjects() {
     document.querySelector('.gallery').innerHTML = '';
     document.querySelector('.pictures').innerHTML = '';
@@ -73,8 +75,8 @@ function viewProjects() {
         })
 }
 
-////
-function showProjects(project) {
+/////
+function showProjects(project) { // in the DOM
     const gallery = document.querySelector('div.gallery');
     const newFigure = document.createElement('figure');
 
@@ -92,8 +94,7 @@ function showProjects(project) {
     gallery.appendChild(newFigure);
 };
 
-////
-function createFilters(category) {
+function createFilters(category) { // in the DOM
     const filters = document.querySelector('ul.filters');
     const newLi = document.createElement('li');
     newLi.innerText = category.name;
@@ -125,7 +126,8 @@ function filter() {
     });
 }
 
-// change the homepage when the user is logged in
+/////
+
 function editHomepage() {
     const editDivContent = `<div class="edit-margin">
     <a href="#"><i class="fa-regular fa-pen-to-square"></i>
@@ -154,37 +156,24 @@ function editHomepage() {
     portfolioSectionTitle.insertAdjacentHTML("beforeend", editDivContent);
 }
 
-// function to show images in modal window
-function showImages(project) {
-    const pictures = document.querySelector('.pictures');
-    const figureModal = document.createElement('figure');
-    const figcaptionModal = document.createElement('figcaption');
+if (localStorage.getItem('token')) {
+    editHomepage();
 
-    figureModal.setAttribute('id', project.id);
+    document.querySelector('.filters').style.display = 'none';
 
-    const imageModal = document.createElement('img');
-    imageModal.setAttribute('crossorigin', 'anonymous')
-    imageModal.setAttribute('src', project.imageUrl);
+    const loginButton = document.querySelector('.login');
+    loginButton.innerText = 'logout';
+    loginButton.addEventListener('click', () => {
+        localStorage.clear();
+        location.reload();
+    })
 
-    figcaptionModal.innerText = 'éditer';
-
-    const figureContent = `<div class="icon-div-style icon-div-arrows icon-div-style-not-shown">
-    <i class="fa-solid fa-arrows-up-down-left-right icon-style"></i></div>
-    <div id="${project.id}" class="icon-div-style icon-div-trash icon-div-style-shown">
-    <i class="fa-regular fa-trash-can icon-style"></i></div>`;
-
-    figureModal.appendChild(imageModal);
-    figureModal.appendChild(figcaptionModal);
-    figureModal.insertAdjacentHTML('afterbegin', figureContent);
-    pictures.appendChild(figureModal);
+    const galleryEditButton = document.querySelector('.portfolio-title a');
+    galleryEditButton.setAttribute('href', '#photo-gallery-modal');
+    galleryEditButton.addEventListener('click', openModal);
 }
 
-function addArrows() {
-    const firstArrowsIcon = document.querySelector('.icon-div-arrows:first-child');
-    firstArrowsIcon.classList.replace('icon-div-style-not-shown', 'icon-div-style-shown');
-};
-
-///////////////
+/////
 
 let modal = null;
 
@@ -218,8 +207,6 @@ window.addEventListener('keydown', function (e) {
     }
 })
 
-///////////////
-
 function openAddPhotoModal(e) {
     e.preventDefault();
     document.querySelector('#photo-gallery-modal').style.display = 'none';
@@ -248,27 +235,40 @@ function returnToGalleryModal(e) {
     document.querySelector('#photo-gallery-modal').style.display = null;
 }
 
-///////////////
+/////
+function showImages(project) { // in modal window
+    const pictures = document.querySelector('.pictures');
+    const figureModal = document.createElement('figure');
+    const figcaptionModal = document.createElement('figcaption');
 
-if (localStorage.getItem('token')) {
-    editHomepage();
-    document.querySelector('.filters').style.display = 'none';
-    const loginButton = document.querySelector('.login');
-    loginButton.innerText = 'logout';
-    loginButton.addEventListener('click', () => {
-        localStorage.clear();
-        location.reload();
-    })
+    figureModal.setAttribute('id', project.id);
 
-    const galleryEditButton = document.querySelector('.portfolio-title a');
-    galleryEditButton.setAttribute('href', '#photo-gallery-modal');
-    //console.log(galleryEditButton);
-    galleryEditButton.addEventListener('click', openModal);
+    const imageModal = document.createElement('img');
+    imageModal.setAttribute('crossorigin', 'anonymous')
+    imageModal.setAttribute('src', project.imageUrl);
+
+    figcaptionModal.innerText = 'éditer';
+
+    const figureContent = `<div class="icon-div-style icon-div-arrows icon-div-style-not-shown">
+    <i class="fa-solid fa-arrows-up-down-left-right icon-style"></i></div>
+    <div id="${project.id}" class="icon-div-style icon-div-trash icon-div-style-shown">
+    <i class="fa-regular fa-trash-can icon-style"></i></div>`;
+
+    figureModal.appendChild(imageModal);
+    figureModal.appendChild(figcaptionModal);
+    figureModal.insertAdjacentHTML('afterbegin', figureContent);
+    pictures.appendChild(figureModal);
 }
 
+function addArrows() {
+    const firstArrowsIcon = document.querySelector('.icon-div-arrows:first-child');
+    firstArrowsIcon.classList.replace('icon-div-style-not-shown', 'icon-div-style-shown');
+};
 
+/////
+const addPhotoButton = document.querySelector('#add-photo-button');
+addPhotoButton.addEventListener('click', openAddPhotoModal);
 
-//////// request to add a new project
 const form = document.querySelector('#add-photo');
 
 function addNewProject() {
@@ -301,7 +301,6 @@ function addNewProject() {
 
 }
 
-// create a paragraph for authentication error
 function checkAddForm() {
     const upFile = document.querySelector('#upfile');
     const title = document.querySelector('#title');
@@ -334,6 +333,7 @@ form.addEventListener('submit', (e) => {
     document.querySelector('.new-image-style').style.display = 'none';
 });
 
+/////
 function deleteRequest(id) {
     fetch('http://localhost:5678/api/works/' + id, {
         method: 'DELETE',
@@ -394,11 +394,6 @@ function deleteAllProjects() {
 }
 
 document.querySelector('.delete-gallery').addEventListener('click', deleteAllProjects);
-
-//////
-
-const addPhotoButton = document.querySelector('#add-photo-button');
-addPhotoButton.addEventListener('click', openAddPhotoModal);
 
 ///// preview image before upload
 const upFile = document.querySelector('#upfile');
