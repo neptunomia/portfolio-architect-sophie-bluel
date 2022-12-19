@@ -1,5 +1,4 @@
 const projects = [];
-const categories = [];
 let token = localStorage.getItem('token');
 
 ///// categories and projects display by default
