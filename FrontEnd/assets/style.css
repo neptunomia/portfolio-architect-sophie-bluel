@@ -322,12 +322,13 @@ footer nav ul {
 
 .modal-window {
 	margin: auto;
-	width: 620px;
-	height: 740px;
+	width: 630px;
+	height: 731px;
 	padding: 35px 75px 35px 75px;
 	border-radius: 10px;
 	text-align: center;
 	background: #fff;
+	overflow: auto;
 }
 
 .button-icon-style {
