@@ -70,7 +70,7 @@ function showProjects(project) { // in the DOM
     const gallery = document.querySelector('div.gallery');
     const newFigure = document.createElement('figure');
 
-    newFigure.setAttribute('id', project.id);
+    newFigure.setAttribute('data-id', project.id);
 
     const newImage = document.createElement('img');
     newImage.setAttribute('crossorigin', 'anonymous')
@@ -89,7 +89,7 @@ function createFilters(category) { // in the DOM
     const newLi = document.createElement('li');
     newLi.innerText = category.name;
     newLi.classList.add('filter');
-    newLi.setAttribute('id', category.id);
+    newLi.setAttribute('data-id', category.id);
     filters.appendChild(newLi);
 };
 
@@ -98,7 +98,7 @@ function filter() {
     //console.log(filters);
     filters.forEach((filter) => { // loop to display the right projects on click based on filter and category
         filter.addEventListener('click', function () {
-            let id = filter.getAttribute('id');
+            let id = filter.getAttribute('data-id');
             console.log(id);
             const selectedFilter = document.querySelector('.selected-filter');
             selectedFilter.classList.remove('selected-filter');
@@ -238,7 +238,7 @@ function showImages(project) { // in modal window
     const figureModal = document.createElement('figure');
     const figcaptionModal = document.createElement('figcaption');
 
-    figureModal.setAttribute('id', project.id);
+    figureModal.setAttribute('data-id', project.id);
 
     const imageModal = document.createElement('img');
     imageModal.setAttribute('crossorigin', 'anonymous')
@@ -248,7 +248,7 @@ function showImages(project) { // in modal window
 
     const figureContent = `<div class="icon-div-style icon-div-arrows icon-div-style-not-shown">
     <i class="fa-solid fa-arrows-up-down-left-right icon-style"></i></div>
-    <div id="${project.id}" class="icon-div-style icon-div-trash icon-div-style-shown">
+    <div data-id="${project.id}" class="icon-div-style icon-div-trash icon-div-style-shown">
     <i class="fa-regular fa-trash-can icon-style"></i></div>`;
 
     figureModal.appendChild(imageModal);
@@ -356,7 +356,7 @@ function deleteProject() {
     trashIcons.forEach((trashIcon) => {
         trashIcon.addEventListener('click', function () {
             console.log(trashIcon);
-            let id = trashIcon.getAttribute('id');
+            let id = trashIcon.getAttribute('data-id');
             console.log(id);
 
             deleteRequest(id);
@@ -375,7 +375,7 @@ function deleteAllProjects() {
     const allProjects = document.querySelectorAll('.pictures figure');
     console.log(allProjects);
     allProjects.forEach((project) => {
-        let id = project.getAttribute('id');
+        let id = project.getAttribute('data-id');
 
         deleteRequest(id);
 
