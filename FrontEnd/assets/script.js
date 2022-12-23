@@ -410,7 +410,7 @@ function viewPhoto() {
             selectedFile = reader.result;
             newPhoto.setAttribute('src', selectedFile);
         }
-        reader.readAsDataURL(upFile.files[0]);
+        reader.readAsDataURL(newFile);
 
         newPhoto.style.display = null;
         document.querySelector('.landscape-icon').style.display = 'none';
