@@ -177,6 +177,7 @@ function openModal(e) {
     modal.addEventListener('click', closeModal);
     modal.querySelector('.close-icon').addEventListener('click', closeModal);
     modal.querySelector('.js-modal-stop').addEventListener('click', stopPropagation);
+    document.querySelector('body').style.overflow = 'hidden';
 }
 
 function closeModal(e) {
@@ -187,6 +188,7 @@ function closeModal(e) {
     modal.removeEventListener('click', closeModal);
     modal.querySelector('.close-icon').removeEventListener('click', closeModal);
     modal.querySelector('.js-modal-stop').removeEventListener('click', stopPropagation);
+    document.querySelector('body').style.overflow = null;
     modal = null;
 }
 
@@ -209,6 +211,7 @@ function openAddPhotoModal(e) {
     modal.querySelector('.close-icon2').addEventListener('click', closeAddPhotoModal);
     modal.querySelector('.return-icon').addEventListener('click', returnToGalleryModal);
     modal.querySelector('.js-modal-stop2').addEventListener('click', stopPropagation);
+    document.querySelector('body').style.overflow = 'hidden';
 }
 
 function closeAddPhotoModal(e) {
@@ -222,6 +225,7 @@ function closeAddPhotoModal(e) {
     modal.removeEventListener('click', closeAddPhotoModal);
     modal.querySelector('.close-icon2').removeEventListener('click', closeAddPhotoModal);
     modal.querySelector('.js-modal-stop2').removeEventListener('click', stopPropagation);
+    document.querySelector('body').style.overflow = null;
     modal = null;
 }
 
